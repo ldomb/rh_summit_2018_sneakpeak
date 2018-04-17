@@ -1,0 +1,72 @@
+---
+- name: Generate  UUID
+  shell: openssl rand -hex 2
+  register: uuid_list
+  with_sequence: start=1 end="{{ count }}"
+
+- name: Launch ec2 instances
+  ec2_instance:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    key_name: "{{ key_name }}"
+    security_group: "{{ group_id }}"
+    instance_type: "{{ instance_type }}"
+    image_id: "{{ image }}"
+    vpc_subnet_id: "{{ vpc_subnet_id | random }}"
+    region: "{{ region }}"
+    name: "{{ vm_name }}-{{ item.stdout }}"
+    tags: "{{ instance_tags }}"
+    network:
+      assign_public_ip: "{{ assign_public_ip }}"
+    wait: "{{ wait }}"
+    user_data: "{{ user_data }}"
+  register: ec2_created_vms
+  with_items: "{{ uuid_list.results }}"
+
+
+################################################### DEBUG linux ##################################
+- name: debug ec2_created_vms
+  debug: var=ec2_created_vms
+
+- name: debug public_dns_name
+  debug: msg="{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='public_dns_name') | list }}"
+
+- name: debug public_ip_address
+  debug: msg="{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='public_ip_address') | list }}"
+
+- name: debug private_ip_address
+  debug: msg="{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='private_ip_address') | list }}"
+
+- name: debug private_dns_name
+  debug: msg="{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='private_dns_name') | list }}"
+
+- name: debug instance_id
+  debug: msg="{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='instance_id') | list }}"
+
+- name: set fact for public_dns_names
+  set_fact:
+    public_dns_names_list: "{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='public_dns_name') | list }}"
+
+- name: set fact for public_ip_addr
+  set_fact:
+    public_ip_addr_list: "{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='public_ip_address') | list }}"
+
+- name: set fact for private_ip_addr needed for F5
+  set_fact:
+    private_ip_addr_list: "{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='private_ip_address') | list }}"
+
+- name: set fact for instance_id list
+  set_fact:
+    instance_id_list: "{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='instance_id') | list }}"
+
+- name: set fact for private_dns_names
+  set_fact:
+    private_dns_name_list: "{{ ec2_created_vms.results | map(attribute='instances') | flatten | map(attribute='private_dns_name') | list }}"
+
+
+- name: adding linux ec2_instances to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: ec2_hosts
+  with_items: "{{ public_ip_addr_list }}"
+

@@ -1,0 +1,19 @@
+{
+	"action": "create",
+	"associations": {
+		"service": [{
+			"href": "{{ manageiq.api_url }}/api/{{ manageiq.service }}"
+		}]
+	},
+	"generic_object_definition": {
+		"href": "{{ manageiq.api_url }}/api/generic_object_definitions/99000000000002"
+	},
+	"name": "{{poolname}}",
+	"property_attributes": {
+		"vip": "{{ vip }}",
+                {% for privatedns in private_dns_name_list %}
+		"node{{loop.index}}": "{{ privatedns }}",
+                {% endfor %}
+		"bigipserver": "{{bigip_server}}"
+	}
+}

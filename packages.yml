@@ -1,0 +1,25 @@
+---
+# on cfme
+  116  subscription-manager attach --pool 8a85f98660c23a380160c2fa572d302b
+  118  subscription-manager repos --enable=rhel-7-server-ose-3.9-rpms 
+  121  subscription-manager clean
+   88  yum repolist
+   89  yum repolist all
+   92  yum update ansible
+  117  yum install python2-botocore
+  119  yum install python2-botocore
+  120  yum install python2-boto3
+  139  yum install python-pip
+  219  yum install python-suds-jurko
+  137  wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  220  wget https://access.cdn.redhat.com//content/origin/rpms/python-suds/0.7/0.4.94664ddd46a6.el7ost/fd431d51/python-suds-0.7-0.4.94664ddd46a6.el7ost.noarch.rpm?_auth_=1523062855_d2da2e52f0545fedeb6490d10b06fab6
+  346  history | grep wget
+ 135  pip2
+  139  yum install python-pip
+  143  pip2 install boto3
+  144  pip2 install --upgrade  boto3
+  145  pip install --upgrade pip
+  216  pip2 install f5-sdk
+  217  pip install netaddr
+  218  pip install bigsuds
+  225  pip install bigsuds

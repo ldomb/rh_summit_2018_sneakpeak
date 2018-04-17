@@ -1,0 +1,28 @@
+---
+- name: SSH into instance
+  shell: cat /etc/resolv.conf
+  register: ssh_output
+
+- name: Log ssh_output
+  debug:
+    var: ssh_output
+
+# Add your own plays here
+
+- name: install the latest version of Apache
+  yum:
+    name: httpd
+    state: latest 
+
+- name: copy index.html
+  copy:
+    src: files/{{ item }}
+    dest: /var/www/html/{{ item }}
+  with_items:
+    - index.html
+    - mystyle.css
+
+- name: Start service httpd, if not running
+  service:
+    name: httpd
+    state: restarted 

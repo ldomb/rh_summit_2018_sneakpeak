@@ -1,1 +1,2 @@
-# rh_summit_2018_sneakpeak
+# summit2018
+This repo contains code of my red hat summit 2018 demo
